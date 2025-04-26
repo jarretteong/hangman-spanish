@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,18 +27,22 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <SignedIn>
-            <header className="flex justify-end items-center p-4 gap-4 h-16">
-              <UserButton />
-            </header>
-          </SignedIn>
-          {children}
-        </body>
-      </html>
+      <ReactQueryProvider>
+        <html lang="en">
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            <Suspense fallback={<div>Loading...</div>}>
+              <SignedIn>
+                <header className="flex justify-end items-center p-4 gap-4 h-16">
+                  <UserButton />
+                </header>
+              </SignedIn>
+              {children}
+            </Suspense>
+          </body>
+        </html>
+      </ReactQueryProvider>
     </ClerkProvider>
   );
 }

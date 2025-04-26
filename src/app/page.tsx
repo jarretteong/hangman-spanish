@@ -1,4 +1,4 @@
-import HangmanGame from "./play/page";
+import HangmanGame from "./hangman/page";
 
 export default function Home() {
   return (
