@@ -100,7 +100,7 @@ export const HangmanFigure = ({ attempts }: Props) => {
   const BODY_PARTS = [HEAD, BODY, RIGHT_ARM, LEFT_ARM, RIGHT_LEG, LEFT_LEG];
 
   return (
-    <div className="flex justify-center items-start mt-8">
+    <div className="flex justify-center items-start mt-4">
       <svg width="350" height="350" className="stroke-black">
         {/* Gallows */}
         <line x1="84" y1="28" x2="196" y2="28" stroke="black" strokeWidth="4" />
