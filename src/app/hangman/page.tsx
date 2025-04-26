@@ -6,9 +6,12 @@ import { useState, useEffect } from "react";
 import { HangmanFigure } from "../../components/HangmanFigure";
 import { Keyboard } from "../../components/Keyboard";
 import Link from "next/link";
-import Leaderboard from "@/components/Leaderboard/Leaderboard";
+import Leaderboard from "@/components/Leaderboard";
+import { useUser } from "@clerk/nextjs";
+import { useUpdateScore } from "@/hooks/useUpdateScore";
 
 const HangmanGame = () => {
+  const { mutateAsync: updateScore } = useUpdateScore();
   const [selected, setSelected] = useState(() => {
     const entry = words[Math.floor(Math.random() * words.length)];
     return entry;
@@ -17,7 +20,8 @@ const HangmanGame = () => {
   const [guessed, setGuessed] = useState<string[]>([]);
   const [attempts, setAttempts] = useState(0);
   const [status, setStatus] = useState<"playing" | "won" | "lost">("playing");
-
+  const [points, setPoints] = useState(10);
+  const { user } = useUser();
   const word = selected.word;
   const hint = selected.hint;
   const maxAttempts = 6;
@@ -29,17 +33,24 @@ const HangmanGame = () => {
 
     if (!word.includes(letter)) {
       setAttempts((prev) => prev + 1);
+      setPoints((prev) => prev - 1);
     }
   };
 
   useEffect(() => {
+    const handleUpdateScore = async () => {
+      if (!user) return;
+      await updateScore({ playerId: user.id, score: points });
+    };
+
     const isWinner = word.split("").every((char) => guessed.includes(char));
     if (isWinner) {
       setStatus("won");
+      handleUpdateScore();
     } else if (attempts >= maxAttempts) {
       setStatus("lost");
     }
-  }, [guessed, attempts, word]);
+  }, [guessed, attempts, word, user, updateScore, points]);
 
   return (
     <main className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] p-4">
@@ -96,6 +107,7 @@ const HangmanGame = () => {
                     setGuessed([]);
                     setAttempts(0);
                     setStatus("playing");
+                    setPoints(10);
                   }}
                 >
                   Play Again

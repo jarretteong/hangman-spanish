@@ -1,22 +1,14 @@
-// lib/fetchLeaderboard.ts
-
-export type LeaderboardEntry = {
-  id: string;
-  username: string;
-  score: number;
-};
+import { LeaderboardEntry } from "@/types/leaderboard";
 
 export async function fetchLeaderboard(): Promise<LeaderboardEntry[]> {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/leaderboard`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/score/top5`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        // Cache for 1 minute
-        next: { revalidate: 60 }, // 🔥 1 min cache
       }
     );
 
